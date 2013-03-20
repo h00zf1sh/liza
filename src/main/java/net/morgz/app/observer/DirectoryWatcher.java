@@ -5,7 +5,6 @@ import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
