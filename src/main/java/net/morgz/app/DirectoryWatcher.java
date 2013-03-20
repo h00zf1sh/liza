@@ -1,5 +1,7 @@
 package net.morgz.app;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -12,6 +14,11 @@ import static java.nio.file.StandardWatchEventKinds.*;
  *
  */
 public class DirectoryWatcher {
+
+    /**
+     * Logger
+     */
+    private static final Logger LOG = Logger.getLogger(DirectoryWatcher.class);
 
     private final WatchService watcherService;
 
@@ -26,6 +33,8 @@ public class DirectoryWatcher {
      * Register the given directory with the WatchService
      */
     private void registerDirectoryWithWatchService(Path directory) throws IOException {
+        LOG.debug("Registering " + directory.toString() + " with watcher service");
+
         WatchKey key = directory.register(
             this.watcherService,
             ENTRY_CREATE,
@@ -36,6 +45,13 @@ public class DirectoryWatcher {
         keys.put(key, directory);
     }
 
+    /**
+     * Register a directory structure with the watch service
+     *
+     * @param startDirectory Start Directory
+     *
+     * @throws IOException
+     */
     public void register(final Path startDirectory) throws IOException {
 
         // Register directory and sub-directories
