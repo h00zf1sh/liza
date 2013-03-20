@@ -36,6 +36,13 @@ public class DirectoryWatcher {
         keys.put(key, directory);
     }
 
+    /**
+     * Register a directory structure with the watch service
+     *
+     * @param startDirectory Start Directory
+     *
+     * @throws IOException
+     */
     public void register(final Path startDirectory) throws IOException {
 
         // Register directory and sub-directories
