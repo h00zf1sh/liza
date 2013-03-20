@@ -8,7 +8,9 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.nio.file.StandardWatchEventKinds.*;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 
 /**
  *
@@ -38,8 +40,8 @@ public class DirectoryWatcher {
         WatchKey key = directory.register(
             this.watcherService,
             ENTRY_CREATE,
-            ENTRY_DELETE,
-            ENTRY_MODIFY
+            ENTRY_MODIFY,
+            ENTRY_DELETE
         );
 
         keys.put(key, directory);
@@ -63,5 +65,42 @@ public class DirectoryWatcher {
                 return FileVisitResult.CONTINUE;
             }
         });
+    }
+
+    public void watch() {
+
+        while(true) {
+
+            try {
+                WatchKey key = this.watcherService.take();
+
+                Path directory = this.keys.get(key);
+
+                this.processEvents(key, directory);
+
+            } catch (InterruptedException iEx) {
+                LOG.error(iEx.toString());
+            }
+        }
+    }
+
+    private void processEvents(WatchKey key, Path directory) {
+
+        for (WatchEvent<?>event: key.pollEvents()) {
+
+            WatchEvent<Path> ev = (WatchEvent)event;
+
+            Path name = ev.context();
+
+            Path child = directory.resolve(name);
+
+            LOG.debug(event.kind().name() + ": " + child);
+
+            boolean valid = key.reset();
+
+            if (!valid) {
+                this.keys.remove(key);
+            }
+        }
     }
 }

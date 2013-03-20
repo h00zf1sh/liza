@@ -25,6 +25,20 @@ public class App
 
     private static final String PROPERTIES_FILE = "liza.properties";
 
+    private DirectoryWatcher directoryWatcher;
+
+
+    /**
+     * Setter for the directory watcher
+     *
+     * @param directoryWatcher Directory Watcher
+     */
+    public void setDirectoryWatcher(DirectoryWatcher directoryWatcher) {
+
+        this.directoryWatcher = directoryWatcher;
+
+    }
+
     /**
      * Main method
      *
@@ -37,7 +51,11 @@ public class App
         Properties properties = PropertiesPersistor.getProperties(PROPERTIES_FILE);
 
         try {
-            new App().start(properties);
+            App app = new App();
+
+            app.setDirectoryWatcher(new DirectoryWatcher());
+
+            app.start(properties);
         } catch (IOException ioEx) {
             LOG.error(ioEx.toString());
         }
@@ -49,8 +67,15 @@ public class App
 
         Path dir = Paths.get(rootDirectory);
 
-        DirectoryWatcher directoryWatcher = new DirectoryWatcher();
+        this.directoryWatcher.register(dir);
 
-        directoryWatcher.register(dir);
+        this.intializeDirectoryWatcherListeners();
+
+        this.directoryWatcher.watch();
+    }
+
+    private void intializeDirectoryWatcherListeners() {
+
+
     }
 }
