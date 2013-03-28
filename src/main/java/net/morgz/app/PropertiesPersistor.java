@@ -6,27 +6,27 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.omg.CORBA.PRIVATE_MEMBER;
 
-public class PropertiesPersistor
+class PropertiesPersistor
 {
 	/** Log4j **/
 	private static final Logger LOG = Logger.getLogger(PropertiesPersistor.class);
 
     public static final String DIRECTORY_TO_WATCH = "directoryToWatch";
 
+    private static final String PROPERTIES_FILE = "liza.properties";
+
     /**
      * Get properties from file
      *
-     * @param filename Filename
-     *
      * @return Properties
      */
-	public static LizaProperties getProperties(String filename)
+	public static LizaProperties getProperties()
 	{
 		LizaProperties properties = new LizaProperties();
 
 		try
 		{
-			FileInputStream in = new FileInputStream(filename);
+			FileInputStream in = new FileInputStream(PROPERTIES_FILE);
 
 			properties.load(in);
 

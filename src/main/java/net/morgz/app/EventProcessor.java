@@ -7,5 +7,5 @@ package net.morgz.app;
  * Time: 14:09
  * To change this template use File | Settings | File Templates.
  */
-public class EventProcessor {
+class EventProcessor {
 }

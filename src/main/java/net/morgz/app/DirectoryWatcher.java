@@ -15,7 +15,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
 /**
  *
  */
-public class DirectoryWatcher {
+class DirectoryWatcher {
 
     /**
      * Logger

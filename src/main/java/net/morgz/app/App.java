@@ -23,8 +23,6 @@ public class App
 
     private static final int LOG4J_WATCH_INTERVAL = 1000;
 
-    private static final String PROPERTIES_FILE = "liza.properties";
-
     private DirectoryWatcher directoryWatcher;
 
 
@@ -33,7 +31,7 @@ public class App
      *
      * @param directoryWatcher Directory Watcher
      */
-    public void setDirectoryWatcher(DirectoryWatcher directoryWatcher) {
+    void setDirectoryWatcher(DirectoryWatcher directoryWatcher) {
 
         this.directoryWatcher = directoryWatcher;
 
@@ -48,7 +46,7 @@ public class App
     {
         DOMConfigurator.configureAndWatch(LOG4_CONFIG_FILE, LOG4J_WATCH_INTERVAL);
 
-        Properties properties = PropertiesPersistor.getProperties(PROPERTIES_FILE);
+        Properties properties = PropertiesPersistor.getProperties();
 
         try {
             App app = new App();
@@ -61,7 +59,7 @@ public class App
         }
     }
 
-    public void start(Properties properties) throws IOException {
+    void start(Properties properties) throws IOException {
 
         String rootDirectory = properties.getProperty(PropertiesPersistor.DIRECTORY_TO_WATCH);
 
@@ -69,13 +67,7 @@ public class App
 
         this.directoryWatcher.register(dir);
 
-        this.intializeDirectoryWatcherListeners();
-
         this.directoryWatcher.watch();
     }
 
-    private void intializeDirectoryWatcherListeners() {
-
-
-    }
 }
