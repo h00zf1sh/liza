@@ -4,6 +4,8 @@ import junit.framework.TestCase;
 import net.morgz.app.storage.InvalidCredentialsException;
 import net.morgz.app.storage.StorageException;
 import net.morgz.app.storage.StorageInterface;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,13 +26,23 @@ public class AmazonS3StorageTest extends TestCase {
 
         try {
 
-            boolean storedOK = this.storage.store();
+            this.storage.createConnection("http://www.example.com");
+
+            String storageArea = "test-bucket";
+
+            InputStream is = new ByteArrayInputStream("badger".getBytes());
+
+            boolean storedOK = this.storage.store(storageArea, is);
 
             this.assertTrue(storedOK);
 
         } catch (StorageException sEx) {
 
             this.fail("StorageException should not be thrown: " + sEx.toString());
+
+        } catch (IOException ioEx) {
+
+            this.fail("IOException should not be thrown: " + ioEx.toString());
 
         }
 
