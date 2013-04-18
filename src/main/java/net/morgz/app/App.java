@@ -1,5 +1,8 @@
 package net.morgz.app;
 
+import net.morgz.app.storage.StorageFactoryInterface;
+import net.morgz.app.storage.StorageInterface;
+import net.morgz.app.storage.amazon.AmazonS3StorageFactory;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 
@@ -25,6 +28,10 @@ public class App
 
     private DirectoryWatcher directoryWatcher;
 
+    private Properties properties;
+
+    private FileStore fileStore;
+
 
     /**
      * Setter for the directory watcher
@@ -34,6 +41,23 @@ public class App
     void setDirectoryWatcher(DirectoryWatcher directoryWatcher) {
 
         this.directoryWatcher = directoryWatcher;
+
+    }
+
+    /**
+     * Setter for the properties
+     *
+     * @param properties Properties Properties
+     */
+    void setProperties(Properties properties) {
+
+        this.properties = properties;
+
+    }
+
+    void setFileStore(FileStore fileStore) {
+
+        this.fileStore = fileStore;
 
     }
 
@@ -49,25 +73,37 @@ public class App
         Properties properties = PropertiesPersistor.getProperties();
 
         try {
+
             App app = new App();
+
+            app.setFileStore(new FileStore());
 
             app.setDirectoryWatcher(new DirectoryWatcher());
 
-            app.start(properties);
+            app.setProperties(properties);
+
+            app.start();
+
         } catch (IOException ioEx) {
+
             LOG.error(ioEx.toString());
+
         }
+
     }
 
-    void start(Properties properties) throws IOException {
+    void start() throws IOException {
 
-        String rootDirectory = properties.getProperty(PropertiesPersistor.DIRECTORY_TO_WATCH);
+        String rootDirectory = this.properties.getProperty(PropertiesPersistor.DIRECTORY_TO_WATCH);
 
         Path dir = Paths.get(rootDirectory);
 
         this.directoryWatcher.register(dir);
 
+        this.directoryWatcher.addDirectoryChangeListener(this.fileStore);
+
         this.directoryWatcher.watch();
+
     }
 
 }

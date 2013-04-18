@@ -5,7 +5,9 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
@@ -26,9 +28,16 @@ class DirectoryWatcher {
 
     private final Map<WatchKey,Path> keys;
 
+    private List<DirectoryChangeListener> listeners;
+
+
     public DirectoryWatcher() throws IOException {
+
         this.watcherService = FileSystems.getDefault().newWatchService();
+
         this.keys = new HashMap<WatchKey,Path>();
+
+        this.listeners = new ArrayList<DirectoryChangeListener>();
     }
 
     /**
@@ -94,6 +103,10 @@ class DirectoryWatcher {
 
             Path child = directory.resolve(name);
 
+            DirectoryChangeEvent directoryChangeEvent = this.createEvent(event, child);
+
+            this.notifyListeners(directoryChangeEvent);
+
             LOG.debug(event.kind().name() + ": " + child);
 
             boolean valid = key.reset();
@@ -103,4 +116,33 @@ class DirectoryWatcher {
             }
         }
     }
+
+    private void notifyListeners(DirectoryChangeEvent event) {
+
+        for (DirectoryChangeListener listener : this.listeners) {
+
+            listener.directoryChanged(event);
+
+        }
+
+    }
+
+    public void addDirectoryChangeListener(DirectoryChangeListener listener) {
+
+        this.listeners.add(listener);
+
+    }
+
+    private DirectoryChangeEvent createEvent(WatchEvent watchEvent, Path file) {
+
+        DirectoryChangeEvent event = new DirectoryChangeEvent();
+
+        event.setEventType(watchEvent.kind());
+
+        event.setFile(file);
+
+        return event;
+
+    }
+
 }
