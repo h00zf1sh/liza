@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 import net.morgz.app.storage.InvalidCredentialsException;
 import net.morgz.app.storage.StorageException;
 import net.morgz.app.storage.StorageInterface;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,6 +21,11 @@ import java.util.Map;
  *
  */
 public class AmazonS3Storage implements StorageInterface {
+
+   /**
+    * Logger
+    */
+    private static final Logger LOG = Logger.getLogger(AmazonS3Storage.class);
 
     private static final String ACCESS_KEY_PARAM = "AccessKey";
 
@@ -44,6 +50,8 @@ public class AmazonS3Storage implements StorageInterface {
 
         String secret = credentials.get(SECRET_PARAM);
 
+        LOG.debug("Authenticating: " + accessKey + " Secret: " + secret);
+
         this.credentials = new BasicAWSCredentials(accessKey, secret);
 
     }
@@ -53,6 +61,8 @@ public class AmazonS3Storage implements StorageInterface {
 
         this.connection = new AmazonS3Client(this.credentials);
 
+        LOG.debug("Setting end point to: " + endpoint);
+
         this.connection.setEndpoint(endpoint);
 
     }
@@ -60,10 +70,14 @@ public class AmazonS3Storage implements StorageInterface {
     @Override
     public boolean store(String storageArea, InputStream inputStream) throws StorageException, IOException {
 
-        Bucket bucket = this.connection.createBucket(storageArea);
+        LOG.debug("Creating bucket: " + storageArea);
+
+        //Bucket bucket = this.connection.createBucket(storageArea);
+
+        LOG.debug("Putting object");
 
         PutObjectResult putObjectResult = this.connection.putObject(
-            bucket.getName(),
+            "morgz-test",
             "todo",
             inputStream,
             new ObjectMetadata()

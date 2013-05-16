@@ -7,6 +7,7 @@ import net.morgz.app.storage.StorageInterface;
 import net.morgz.app.storage.amazon.AmazonS3StorageFactory;
 import org.apache.log4j.Logger;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class FileStore implements DirectoryChangeListener {
 
         };
 
-        this.storageEngine.createConnection("s3-website-eu-west-1.amazonaws.com");
+        this.storageEngine.createConnection("http://s3-website-eu-west-1.amazonaws.com");
 
     }
 
@@ -56,7 +57,11 @@ public class FileStore implements DirectoryChangeListener {
 
             try {
 
-                this.storageEngine.store("morgz-test", new FileInputStream(event.getFile().toFile()));
+                File file = event.getFile().toFile();
+
+                LOG.info("Sending " + file.getName());
+
+                this.storageEngine.store("morgz-test", new FileInputStream(file));
 
             } catch (IOException ioEx) {
 
