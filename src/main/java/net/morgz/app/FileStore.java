@@ -33,8 +33,8 @@ public class FileStore implements DirectoryChangeListener {
 
         Map<String, String> credentials = new HashMap<String, String>();
 
-        credentials.put("AccessKey","AKIAIOFWIGAJ4ERWOSQA");
-        credentials.put("Secret", "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");
+        credentials.put("AccessKey","key");
+        credentials.put("Secret", "secret");
 
         try {
 
